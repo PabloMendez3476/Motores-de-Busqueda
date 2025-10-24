@@ -23,14 +23,14 @@ import org.apache.solr.client.solrj.SolrServerException;
 public class Parser {
     
     private String ruta;
-    private SolrIndexador indexador;
+    private Consulta consulta;
     
     public Parser(String ruta) throws SolrServerException, IOException{
          if (ruta == null) {
             throw new IllegalArgumentException("Error: Ruta vacia");
           }
          
-        indexador = new SolrIndexador("miColeccion");
+        consulta = new Consulta("miColeccion");
         this.ruta = ruta;
     }
     
@@ -58,7 +58,7 @@ public class Parser {
                  }
                  queryResult += "\n IDs: ";
                  
-                queryResult += indexador.añade(words) + "\n\n";
+                queryResult += consulta.añade(words) + "\n\n";
                 //System.out.println(line);
                 numQuery++;
             }
