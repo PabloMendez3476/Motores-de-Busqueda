@@ -1,0 +1,76 @@
+package practica2_mb;
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import org.apache.solr.client.solrj.SolrServerException;
+
+/**
+ *
+ * @author Pablo
+ */
+public class Parser {
+    
+    private String ruta;
+    private SolrIndexador indexador;
+    
+    public Parser(String ruta) throws SolrServerException, IOException{
+         if (ruta == null) {
+            throw new IllegalArgumentException("Error: Ruta vacia");
+          }
+         
+        indexador = new SolrIndexador("miColeccion");
+        this.ruta = ruta;
+    }
+    
+    
+    public void addCorpus() throws FileNotFoundException, IOException, SolrServerException{
+        
+        
+        int numQuery = 1;
+        String line, queryResult = "";
+        BufferedReader br = new BufferedReader(new FileReader(ruta));
+        
+           
+        line = br.readLine();
+
+        while (line != null) {
+            if(line.startsWith(".I")){
+                System.out.println(numQuery);
+                br.readLine();//.W
+                line = br.readLine();
+                line = line.replaceAll("[():-]", " ");
+                String words[] = line.trim().split("\\s+");
+                
+                for(int i=0; i<5 && i<words.length; i++){
+                    queryResult += words[i] + " "; 
+                 }
+                 queryResult += "\n IDs: ";
+                 
+                queryResult += indexador.añade(words) + "\n\n";
+                //System.out.println(line);
+                numQuery++;
+            }
+            
+            line = br.readLine();
+        }
+        
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter("Consultas"))){
+            bw.write(queryResult);
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+        
+    }
+}
